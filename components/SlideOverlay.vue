@@ -6,7 +6,7 @@
   <div class="overlay">
     <p class="overlay__title">Gold big hoops</p>
     <p class="overlay__price">$ 68.00</p>
-    <BaseButton variant="secondary">View Product</BaseButton>
+    <BaseButton variant="primary">View Product</BaseButton>
   </div>
 </template>
 <style scoped lang="scss">

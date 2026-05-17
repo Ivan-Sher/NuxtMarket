@@ -29,10 +29,11 @@
 
     &--primary {
       color: var(--white);
-      background: var(--black);
+      background: transparent;
+      border: 1px solid var(--white);
 
       &:hover {
-        background: var(--accent);
+        background: var(--black);
       }
 
       &:active {

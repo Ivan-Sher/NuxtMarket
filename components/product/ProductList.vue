@@ -7,6 +7,7 @@
 
   defineEmits<{
     'add-to-cart': [product: Product]
+    'click-card': [product: Product]
   }>()
 </script>
 
@@ -17,6 +18,7 @@
       :key="product.id"
       :product="product"
       @add-to-cart="$emit('add-to-cart', $event)"
+      @click-card="$emit('click-card', $event)"
     />
   </div>
 </template>

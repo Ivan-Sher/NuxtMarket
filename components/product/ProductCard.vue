@@ -1,10 +1,6 @@
 <script setup lang="ts">
   import type { Product } from '~/types/api'
   import { ref } from 'vue'
-  import { navigateTo } from '#app'
-  import { useToast } from '~/composables/useToast'
-
-  const { showToast } = useToast()
 
   const props = defineProps<{
     product: Product
@@ -12,6 +8,7 @@
 
   const emit = defineEmits<{
     'add-to-cart': [product: Product]
+    'click-card': [product: Product]
   }>()
 
   const isTapped = ref(false)
@@ -20,19 +17,18 @@
     if (!isTapped.value) {
       isTapped.value = true
     } else {
-      navigateTo('/products/' + props.product.id)
+      emit('click-card', props.product)
     }
   }
 
   function handleAddToCart() {
     emit('add-to-cart', props.product)
     isTapped.value = false
-    showToast('The item was added to your Shopping bag.', 'success')
   }
 </script>
 
 <template>
-  <div class="product-card" @click="handleCardClick">
+  <div class="product-card" :class="{ 'is-tapped': isTapped }" @click="handleCardClick">
     <div class="product-card__image-wrapper">
       <img :src="product.image" :alt="product.title" />
       <button class="product-card__btn" @click.stop="handleAddToCart">Add to cart</button>

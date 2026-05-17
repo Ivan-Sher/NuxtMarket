@@ -1,24 +1,23 @@
 <script setup lang="ts">
   import { useToast } from '~/composables/useToast'
+  import ArrowToast from '@/components/icons/ArrowToast.vue'
 
-  const { isVisible, message, type, hideToast } = useToast()
+  const { isVisible, message, type } = useToast()
 </script>
 
 <template>
   <Transition name="toast">
     <div v-if="isVisible" class="toast" :class="`toast--${type}`">
-      <span class="toast__icon">{{ type === 'success' ? '✓' : '✕' }}</span>
+      <span class="toast__icon"><ArrowToast /> </span>
       <span class="toast__message">{{ message }}</span>
-
       <button class="toast__action">View Cart</button>
-      <button class="toast__close" @click="hideToast">✕</button>
     </div>
   </Transition>
 </template>
-<style scoped>
+<style scoped lang="scss">
   .toast {
     position: fixed;
-    top: 0;
+    top: 60px;
     right: 0;
     left: 0;
     z-index: 1000;
@@ -26,9 +25,13 @@
     align-items: center;
     justify-content: space-between;
     height: 68px;
-    padding: 0 calc((100% - 1248px) / 2);
-    background: #ede8df;
-    border-bottom: 1px solid #d9d3c7;
+    padding: 0 16px;
+    background: #efefef;
+    border-top: 2px solid #a18a68;
+
+    @media (max-width: $bp-md) {
+      top: 45px;
+    }
   }
 
   .toast--error {
@@ -63,13 +66,17 @@
   .toast__message {
     font-size: 14px;
     color: #4a4035;
+
+    @media (max-width: $bp-sm) {
+      width: 150px;
+    }
   }
 
   .toast__action {
     padding: 0;
     font-size: 13px;
-    font-weight: 500;
-    color: #8a7d6b;
+    font-weight: 700;
+    color: #a18a68;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     cursor: pointer;
@@ -89,6 +96,6 @@
   .toast-enter-from,
   .toast-leave-to {
     opacity: 0;
-    transform: translateY(-100%);
+    transform: translateY(100%);
   }
 </style>

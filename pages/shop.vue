@@ -4,6 +4,7 @@
   import type { Product } from '~/types/api'
   import { useGetAllProducts } from '~/composables/api/products/useGetAllProducts'
   import { useToast } from '~/composables/useToast'
+  import { navigateTo } from '#app'
 
   const route = useRoute()
   const router = useRouter()
@@ -32,11 +33,18 @@
     router.push({ query: { page } })
   }
 
-  function handleAddToCart(product: Product) {
-    showToast(`${product.title} added to cart`)
+  function handleAddToCart() {
+    showToast(`The item was added to your Shopping bag.`)
+  }
+
+  function handleCardClick(product: Product) {
+    navigateTo('/products/' + product.id)
   }
 </script>
 <template>
+  <div class="page-title">
+    <h4>Shop The Latest</h4>
+  </div>
   <div class="page-content">
     <div>
       <ProductFilters />
@@ -52,7 +60,11 @@
 
       <!-- Товары -->
       <template v-else>
-        <ProductList :products="paginatedProducts" @add-to-cart="handleAddToCart" />
+        <ProductList
+          :products="paginatedProducts"
+          @add-to-cart="handleAddToCart"
+          @click-card="handleCardClick"
+        />
         <AppPagination
           :currentPage="currentPage"
           :totalPages="totalPages"
@@ -98,6 +110,26 @@
     flex-wrap: wrap;
     gap: 50px;
     width: 500px;
+  }
+
+  .page-title {
+    box-sizing: border-box;
+    max-width: 1248px;
+    margin: 0 auto;
+
+    @media (width <= 1280px) {
+      padding: 0 16px;
+    }
+  }
+
+  .page-title h4 {
+    @include text(h4);
+
+    font-weight: 500;
+
+    @media (max-width: $bp-sm) {
+      font-size: 20px;
+    }
   }
 
   .page-content {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useDrawerStore } from '~/stores/drawer'
-  import FiltersIcon from '../icons/FiltersIcon.vue'
-  import BaseButton from '../ui/BaseButton.vue'
+  import FiltersIcon from '@/components/icons/FiltersIcon.vue'
+  import BaseButton from '@/components/ui/BaseButton.vue'
 
   const drawer = useDrawerStore()
 </script>

@@ -5,11 +5,12 @@
 
 <template>
   <div>
-    <BaseHeader />
+    <div>
+      <BaseHeader />
+    </div>
     <main>
       <slot />
     </main>
     <BaseFooter />
-    <BaseToast />
   </div>
 </template>
