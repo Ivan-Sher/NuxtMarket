@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed } from 'vue'
+  import BaseButton from './ui/BaseButton.vue'
 
   const props = defineProps<{
     currentPage: number
@@ -19,31 +20,34 @@
 
 <template>
   <div class="pagination">
-    <button
+    <BaseButton
       v-if="currentPage > 1"
+      variant="transparent"
       class="pagination__arrow"
       @click="emit('change', currentPage - 1)"
     >
       ‹
-    </button>
+    </BaseButton>
 
-    <button
+    <BaseButton
       v-for="page in pages"
       :key="page"
+      variant="transparent"
       class="pagination__page"
       :class="{ 'pagination__page--active': page === currentPage }"
       @click="emit('change', page)"
     >
       {{ page }}
-    </button>
+    </BaseButton>
 
-    <button
+    <BaseButton
       v-if="currentPage < totalPages"
+      variant="transparent"
       class="pagination__arrow"
       @click="emit('change', currentPage + 1)"
     >
       ›
-    </button>
+    </BaseButton>
   </div>
 </template>
 

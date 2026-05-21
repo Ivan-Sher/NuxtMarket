@@ -62,17 +62,25 @@
 
   .product-card__btn {
     position: absolute;
-    bottom: 12px;
+    bottom: 0;
     left: 50%;
+    width: 100%;
+    height: 64px;
     padding: 10px 24px;
-    font-size: 13px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
     white-space: nowrap;
     cursor: pointer;
-    background: #fff;
+    background: #f0f0f0;
     border: none;
     opacity: 0;
     transform: translateX(-50%);
-    transition: opacity 0.2s;
+    transition: opacity 0.5s;
+
+    @media (max-width: $bp-sm) {
+      font-size: 14px;
+    }
   }
 
   @media (hover: hover) {

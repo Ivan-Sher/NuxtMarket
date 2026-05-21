@@ -3,28 +3,27 @@
   import HeaderLogo from './HeaderLogo.vue'
 </script>
 <template>
-  <header class="header">
-    <div class="header__inner header-inner">
-      <HeaderLogo class="header-inner__logo" />
-      <div class="header-inner__content header-inner-content">
-        <HeaderNav class="header-inner-content__nav" />
-        <span class="header-inner-content__span"><HeaderLine /></span>
-        <HeaderActions class="header-inner-content__icons" />
-        <HeaderBurger class="header-inner-content__burger" />
+  <div>
+    <header class="header">
+      <div class="header__inner header-inner">
+        <HeaderLogo class="header-inner__logo" />
+        <div class="header-inner__content header-inner-content">
+          <HeaderNav class="header-inner-content__nav" />
+          <span class="header-inner-content__span"><HeaderLine /></span>
+          <HeaderActions class="header-inner-content__icons" />
+          <HeaderBurger class="header-inner-content__burger" />
+        </div>
       </div>
-    </div>
-  </header>
-  <DrawerMenu name="menu">
-    <SearchField />
-    <MobileNav />
-  </DrawerMenu>
+    </header>
+    <DrawerMenu name="menu">
+      <SearchField />
+      <MobileNav />
+    </DrawerMenu>
+  </div>
 </template>
 
 <style scoped lang="scss">
   .header {
-    margin-bottom: 100px;
-    border-bottom: 1px solid #d8d8d8;
-
     &__inner {
       display: flex;
       align-items: center;

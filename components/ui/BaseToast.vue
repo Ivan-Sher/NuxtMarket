@@ -8,30 +8,40 @@
 <template>
   <Transition name="toast">
     <div v-if="isVisible" class="toast" :class="`toast--${type}`">
-      <span class="toast__icon"><ArrowToast /> </span>
-      <span class="toast__message">{{ message }}</span>
-      <button class="toast__action">View Cart</button>
+      <div class="toast__block-first">
+        <span class="toast__icon"><ArrowToast /> </span>
+        <span class="toast__message">{{ message }}</span>
+      </div>
+      <div class="toast__block-second"><button class="toast__action">View Cart</button></div>
     </div>
   </Transition>
 </template>
 <style scoped lang="scss">
   .toast {
     position: fixed;
-    top: 60px;
-    right: 0;
-    left: 0;
+    top: 63px;
+    left: 50%;
     z-index: 1000;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 1248px;
+    max-width: 100%;
     height: 68px;
     padding: 0 16px;
     background: #efefef;
     border-top: 2px solid #a18a68;
+    transform: translateX(-50%);
 
     @media (max-width: $bp-md) {
       top: 45px;
     }
+  }
+
+  .toast__block-first {
+    display: flex;
+    gap: 16px;
   }
 
   .toast--error {
@@ -96,6 +106,6 @@
   .toast-enter-from,
   .toast-leave-to {
     opacity: 0;
-    transform: translateY(100%);
+    transform: translateX(-50%) translateY(-100%);
   }
 </style>

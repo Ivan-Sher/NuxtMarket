@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  type ButtonVariant = 'primary' | 'secondary'
+  type ButtonVariant = 'primary' | 'secondary' | 'transparent'
   withDefaults(
     defineProps<{
       variant?: ButtonVariant
@@ -56,6 +56,13 @@
         background: var(--accent);
         border-color: var(--accent);
       }
+    }
+
+    &--transparent {
+      padding: 0;
+      cursor: pointer;
+      background: transparent;
+      border: none;
     }
   }
 </style>
