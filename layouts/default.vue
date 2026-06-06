@@ -4,7 +4,6 @@
 
   const route = useRoute()
   const isHome = computed(() => route.path === '/')
-  console.log(route.path)
 </script>
 
 <template>

@@ -1,4 +1,5 @@
 import { useFetch, useCookie, useRuntimeConfig } from '#app'
+import { computed, isRef } from 'vue'
 import type { UseFetchOptions } from 'nuxt/app'
 
 export const useApiFetch = <DataT = unknown>(request: string, options?: UseFetchOptions<DataT>) => {
@@ -11,7 +12,10 @@ export const useApiFetch = <DataT = unknown>(request: string, options?: UseFetch
 
   const defaults: UseFetchOptions<DataT> = {
     baseURL: config.public.apiBaseUrl,
-    key: request + JSON.stringify(options?.params), // нужно для кеширования
+    key: computed(() => {
+      const params = isRef(options?.params) ? options.params.value : options?.params
+      return request + JSON.stringify(params)
+    }),
     headers: {
       'Content-Type': 'application/json',
       Authorization: authToken.value ? `Bearer ${authToken.value}` : config.public.apiToken,
