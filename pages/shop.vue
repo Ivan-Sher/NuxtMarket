@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { useRoute, useRouter } from 'vue-router'
   import { computed, watch, reactive } from 'vue'
+  import { navigateTo } from '#app'
   import type { Product } from '~/types/api'
   import { useGetProductsByCategory } from '~/composables/api/products/useGetProductsByCategory'
   import { useGetCategories } from '~/composables/api/categories/useGetCategories'
@@ -8,7 +9,7 @@
   import type { FiltersType } from '~/types/filters'
   import { FILTERS_DEFAULTS } from '~/types/filters'
   import { useToast } from '~/composables/useToast'
-  import { navigateTo } from '#app'
+  import { useFiltersFromQuery } from '~/composables/useFiltersFromQuery'
 
   const route = useRoute()
   const router = useRouter()
@@ -16,32 +17,7 @@
   const { showToast } = useToast()
   const PER_PAGE = 6
 
-  const filters = reactive<FiltersType>({
-    ...FILTERS_DEFAULTS,
-  })
-
-  const query = route.query
-
-  filters.searchQuery =
-    (Array.isArray(query.searchQuery) ? query.searchQuery[0] : query.searchQuery) ||
-    FILTERS_DEFAULTS.searchQuery
-  filters.category =
-    (Array.isArray(query.category) ? query.category[0] : query.category) ||
-    FILTERS_DEFAULTS.category
-
-  const sortByRow = (Array.isArray(query.sortBy) ? query.sortBy[0] : query.sortBy) ?? ''
-  filters.sortBy = (['price_asc', 'price_desc', 'name', ''] as const).includes(
-    sortByRow as typeof filters.sortBy,
-  )
-    ? (sortByRow as typeof filters.sortBy)
-    : FILTERS_DEFAULTS.sortBy
-
-  filters.priceMin =
-    Number((Array.isArray(query.priceMin) ? query.priceMin[0] : query.priceMin) ?? 0) ||
-    FILTERS_DEFAULTS.priceMin
-  filters.priceMax =
-    Number((Array.isArray(query.priceMax) ? query.priceMax[0] : query.priceMax) ?? 0) ||
-    FILTERS_DEFAULTS.priceMax
+  const filters = reactive<FiltersType>(useFiltersFromQuery(route.query))
 
   const debouncedSearch = useDebouncedRef(
     computed(() => filters.searchQuery),
@@ -70,9 +46,7 @@
 
       router.replace({ query: { ...cleanQuery, page: 1 } })
     },
-    {
-      deep: true,
-    },
+    { deep: true },
   )
 
   const {
@@ -87,7 +61,7 @@
     if (val) showToast(val.message, 'error')
   })
 
-  const filtredProducts = computed(() => {
+  const filteredProducts = computed(() => {
     const list = products.value?.slice() ?? []
 
     const search = debouncedSearch.value.toLowerCase().trim()
@@ -102,7 +76,6 @@
       }
 
       if (priceMin > 0 && product.price < priceMin) return false
-
       if (priceMax > 0 && product.price > priceMax) return false
 
       return true
@@ -123,19 +96,19 @@
 
   const paginatedProducts = computed(() => {
     const start = (currentPage.value - 1) * PER_PAGE
-    return filtredProducts.value?.slice(start, start + PER_PAGE) ?? []
+    return filteredProducts.value.slice(start, start + PER_PAGE)
   })
 
   const totalPages = computed(() => {
-    return Math.ceil((filtredProducts.value?.length ?? 0) / PER_PAGE)
+    return Math.ceil(filteredProducts.value.length / PER_PAGE)
   })
 
   function setPage(page: number) {
-    router.push({ query: { page } })
+    router.push({ query: { ...route.query, page } })
   }
 
-  function handleAddToCart() {
-    showToast(`The item was added to your Shopping bag.`)
+  function handleAddToCart(product: Product) {
+    showToast(`The item "${product.title}" was added to your Shopping bag.`)
   }
 
   function handleCardClick(product: Product) {
@@ -147,35 +120,30 @@
   <div class="page-title">
     <h4>Shop The Latest</h4>
   </div>
+
   <div class="page-content">
-    <div>
+    <div class="page-filters">
       <ProductFilters
-        :modelValue="filters"
+        :model-value="filters"
         :categories="categories ?? []"
-        @update:modelValue="Object.assign(filters, $event)"
+        @update:model-value="Object.assign(filters, $event)"
       />
     </div>
+
     <div>
-      <!-- Загрузка -->
       <div v-if="status === 'pending'" class="skeletons">
         <div v-for="n in 6" :key="n" class="skeleton" />
       </div>
 
-      <!-- Ошибка -->
-      <div v-else-if="status === 'error'" class="error">Не удалось загрузить товары</div>
+      <div v-else-if="status === 'error'" class="error">Failed to load products</div>
 
-      <!-- Товары -->
       <template v-else>
         <ProductList
           :products="paginatedProducts"
           @add-to-cart="handleAddToCart"
           @click-card="handleCardClick"
         />
-        <AppPagination
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          @change="(page) => setPage(page)"
-        />
+        <AppPagination :current-page="currentPage" :total-pages="totalPages" @change="setPage" />
       </template>
     </div>
   </div>
@@ -191,7 +159,12 @@
   .skeleton {
     width: 100%;
     aspect-ratio: 1;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(
+      90deg,
+      var(--light-gray) 25%,
+      var(--gray) 50%,
+      var(--light-gray) 75%
+    );
     background-size: 200% 100%;
     border-radius: 8px;
     animation: shimmer 1.5s infinite;
@@ -207,36 +180,18 @@
     }
   }
 
-  .wrapper {
-    display: flex;
-    justify-content: center;
-  }
-
-  .products {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 50px;
-    width: 500px;
-  }
-
   .page-title {
     box-sizing: border-box;
     max-width: 1248px;
     margin: 0 auto;
 
-    @media (width <= 1280px) {
+    @media (max-width: $bp-xl) {
       padding: 0 16px;
     }
   }
 
   .page-title h4 {
     @include text(h4);
-
-    font-weight: 500;
-
-    @media (max-width: $bp-sm) {
-      font-size: 20px;
-    }
   }
 
   .page-content {
@@ -248,7 +203,6 @@
 
     @media (max-width: $bp-sm) {
       display: block;
-      gap: 0;
     }
   }
 </style>
