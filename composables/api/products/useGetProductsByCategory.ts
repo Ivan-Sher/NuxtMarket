@@ -5,6 +5,6 @@ import { useApiFetch } from '~/composables/api/useApiFetch'
 
 export const useGetProductsByCategory = (category: Ref<string>) => {
   return useApiFetch<Product[]>('/products', {
-    params: computed(() => (category.value ? { category: category.value } : {})),
+    query: computed(() => ({ category: category.value || undefined })),
   })
 }

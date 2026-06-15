@@ -5,32 +5,18 @@
   import type { Product } from '~/types/api'
   import { useGetProductsByCategory } from '~/composables/api/products/useGetProductsByCategory'
   import { useGetCategories } from '~/composables/api/categories/useGetCategories'
-  import { useDebouncedRef } from '~/composables/useDebouncedRef'
-  import type { FiltersType } from '~/types/filters'
   import { FILTERS_DEFAULTS } from '~/types/filters'
+  import type { FiltersType } from '~/types/filters'
   import { useToast } from '~/composables/useToast'
   import { useFiltersFromQuery } from '~/composables/useFiltersFromQuery'
+  import { useProductFiltering } from '~/composables/useProductFiltering'
 
   const route = useRoute()
   const router = useRouter()
 
   const { showToast } = useToast()
-  const PER_PAGE = 6
 
   const filters = reactive<FiltersType>(useFiltersFromQuery(route.query))
-
-  const debouncedSearch = useDebouncedRef(
-    computed(() => filters.searchQuery),
-    400,
-  )
-  const debouncedPriceMin = useDebouncedRef(
-    computed(() => filters.priceMin),
-    300,
-  )
-  const debouncedPriceMax = useDebouncedRef(
-    computed(() => filters.priceMax),
-    300,
-  )
 
   watch(
     filters,
@@ -43,7 +29,6 @@
           cleanQuery[key] = value
         }
       })
-
       router.replace({ query: { ...cleanQuery, page: 1 } })
     },
     { deep: true },
@@ -61,47 +46,9 @@
     if (val) showToast(val.message, 'error')
   })
 
-  const filteredProducts = computed(() => {
-    const list = products.value?.slice() ?? []
-
-    const search = debouncedSearch.value.toLowerCase().trim()
-    const priceMin = debouncedPriceMin.value
-    const priceMax = debouncedPriceMax.value
-
-    const result = list.filter((product: Product) => {
-      if (search) {
-        const inName = product.title.toLowerCase().includes(search)
-        const inDescription = product.description?.toLowerCase().includes(search) ?? false
-        if (!inName && !inDescription) return false
-      }
-
-      if (priceMin > 0 && product.price < priceMin) return false
-      if (priceMax > 0 && product.price > priceMax) return false
-
-      return true
-    })
-
-    if (filters.sortBy === 'price_asc') {
-      result.sort((a, b) => a.price - b.price)
-    } else if (filters.sortBy === 'price_desc') {
-      result.sort((a, b) => b.price - a.price)
-    } else if (filters.sortBy === 'name') {
-      result.sort((a, b) => a.title.localeCompare(b.title))
-    }
-
-    return result
-  })
-
   const currentPage = computed(() => Number(route.query.page) || 1)
 
-  const paginatedProducts = computed(() => {
-    const start = (currentPage.value - 1) * PER_PAGE
-    return filteredProducts.value.slice(start, start + PER_PAGE)
-  })
-
-  const totalPages = computed(() => {
-    return Math.ceil(filteredProducts.value.length / PER_PAGE)
-  })
+  const { paginatedProducts, totalPages } = useProductFiltering(products, filters, currentPage)
 
   function setPage(page: number) {
     router.push({ query: { ...route.query, page } })
@@ -130,7 +77,7 @@
       />
     </div>
 
-    <div>
+    <div class="page-content__products">
       <div v-if="status === 'pending'" class="skeletons">
         <div v-for="n in 6" :key="n" class="skeleton" />
       </div>
@@ -138,12 +85,16 @@
       <div v-else-if="status === 'error'" class="error">Failed to load products</div>
 
       <template v-else>
-        <ProductList
-          :products="paginatedProducts"
-          @add-to-cart="handleAddToCart"
-          @click-card="handleCardClick"
-        />
-        <AppPagination :current-page="currentPage" :total-pages="totalPages" @change="setPage" />
+        <template v-if="paginatedProducts.length > 0">
+          <ProductList
+            :products="paginatedProducts"
+            @add-to-cart="handleAddToCart"
+            @click-card="handleCardClick"
+          />
+          <AppPagination :current-page="currentPage" :total-pages="totalPages" @change="setPage" />
+        </template>
+
+        <div v-else class="no-results">No products found</div>
       </template>
     </div>
   </div>
@@ -198,11 +149,25 @@
     box-sizing: border-box;
     display: flex;
     gap: 30px;
-    justify-content: center;
+    max-width: 1248px;
     padding: 0 16px;
+    margin: 0 auto;
 
     @media (max-width: $bp-sm) {
       display: block;
     }
+  }
+
+  .page-content__products {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .no-results {
+    width: 100%;
+    padding: 60px 0;
+    font-size: 14px;
+    color: #888;
+    text-align: center;
   }
 </style>

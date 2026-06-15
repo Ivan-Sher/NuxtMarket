@@ -13,8 +13,8 @@ export const useApiFetch = <DataT = unknown>(request: string, options?: UseFetch
   const defaults: UseFetchOptions<DataT> = {
     baseURL: config.public.apiBaseUrl,
     key: computed(() => {
-      const params = isRef(options?.params) ? options.params.value : options?.params
-      return request + JSON.stringify(params)
+      const query = isRef(options?.query) ? options.query.value : options?.query
+      return request + JSON.stringify(query)
     }),
     headers: {
       'Content-Type': 'application/json',

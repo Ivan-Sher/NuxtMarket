@@ -2,8 +2,9 @@
   import { useDrawerStore } from '~/stores/drawer'
   import FiltersIcon from '@/components/icons/FiltersIcon.vue'
   import BurgerCloseIcon from '@/components/icons/BurgerCloseIcon.vue'
-  import { ref, nextTick } from 'vue'
+  import { ref } from 'vue'
   import type { FiltersType } from '~/types/filters'
+  import { SortBy } from '~/types/filters'
   import FiltersForm from '@/components/FiltersForm.vue'
 
   const props = defineProps<{
@@ -19,17 +20,20 @@
   const localFilters = ref<FiltersType>({ ...props.modelValue })
   const sliderRef = ref<{ refresh: () => void } | null>(null)
 
+  const sortOptions: { value: SortBy; label: string }[] = [
+    { value: SortBy.Default, label: 'Sort by' },
+    { value: SortBy.PriceAsc, label: 'Price: low to high' },
+    { value: SortBy.PriceDesc, label: 'Price: high to low' },
+    { value: SortBy.Name, label: 'Name: A–Z' },
+  ]
+
   function openDrawer() {
     localFilters.value = { ...props.modelValue }
     drawer.toggle('filters')
-    nextTick(() => {
-      nextTick(() => {
-        sliderRef.value?.refresh?.()
-      })
-    })
   }
 
   function closeDrawer() {
+    emit('update:modelValue', { ...localFilters.value })
     drawer.close()
   }
 </script>
@@ -41,6 +45,7 @@
     <FiltersForm
       :model-value="modelValue"
       :categories="categories"
+      :sort-options="sortOptions"
       @update:model-value="emit('update:modelValue', $event)"
     />
   </div>
@@ -55,7 +60,12 @@
       </div>
 
       <div class="filters-drawer__content">
-        <FiltersForm v-model="localFilters" :categories="categories" :slider-ref="sliderRef" />
+        <FiltersForm
+          v-model="localFilters"
+          :categories="categories"
+          :slider-ref="sliderRef"
+          :sort-options="sortOptions"
+        />
       </div>
     </div>
   </DrawerMenu>

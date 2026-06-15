@@ -72,11 +72,15 @@
     text-transform: uppercase;
     white-space: nowrap;
     cursor: pointer;
-    background: #f0f0f0;
+    background: color-mix(in srgb, var(--white) 50%, transparent);
     border: none;
     opacity: 0;
     transform: translateX(-50%);
     transition: opacity 0.5s;
+
+    &:hover {
+      opacity: 1;
+    }
 
     @media (max-width: $bp-sm) {
       font-size: 14px;

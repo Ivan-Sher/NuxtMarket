@@ -3,11 +3,14 @@
   import ChevronDownIcon from '@/components/icons/ChevronDownIcon.vue'
   import { FILTERS_DEFAULTS } from '~/types/filters'
   import type { FiltersType } from '~/types/filters'
+  import { SortBy } from '~/types/filters'
   import Slider from '@vueform/slider'
+  import { ref, watch } from 'vue'
 
   const props = defineProps<{
     modelValue: FiltersType
     categories: string[]
+    sortOptions: { value: SortBy; label: string }[]
     sliderRef?: { refresh: () => void } | null
   }>()
 
@@ -15,24 +18,44 @@
     'update:modelValue': [filters: FiltersType]
   }>()
 
+  const localSliderValue = ref<[number, number]>([
+    props.modelValue.priceMin,
+    props.modelValue.priceMax ?? 5000,
+  ])
+
+  watch(
+    () => [props.modelValue.priceMin, props.modelValue.priceMax] as [number, number | undefined],
+    ([min, max]) => {
+      localSliderValue.value = [min, max ?? 5000]
+    },
+    { immediate: true },
+  )
+
   function update<K extends keyof FiltersType>(key: K, value: FiltersType[K]) {
     emit('update:modelValue', { ...props.modelValue, [key]: value })
   }
 
-  function resetPrice() {
+  function onSliderChange(val: number[]) {
+    const min = val[0] ?? 0
+    const max = val[1] ?? 5000
+    localSliderValue.value = [min, max]
     emit('update:modelValue', {
       ...props.modelValue,
-      priceMin: FILTERS_DEFAULTS.priceMin,
-      priceMax: FILTERS_DEFAULTS.priceMax,
+      priceMin: min,
+      priceMax: max,
     })
   }
 
-  const sortOptions: { value: FiltersType['sortBy']; label: string }[] = [
-    { value: '', label: 'Sort by' },
-    { value: 'price_asc', label: 'Price: low to high' },
-    { value: 'price_desc', label: 'Price: high to low' },
-    { value: 'name', label: 'Name: A–Z' },
-  ]
+  function resetPrice() {
+    const min = FILTERS_DEFAULTS.priceMin
+    const max = FILTERS_DEFAULTS.priceMax || 5000
+    localSliderValue.value = [min, max]
+    emit('update:modelValue', {
+      ...props.modelValue,
+      priceMin: min,
+      priceMax: max,
+    })
+  }
 </script>
 
 <template>
@@ -83,17 +106,12 @@
   <div class="filters__group">
     <Slider
       :ref="sliderRef"
-      :value="[modelValue.priceMin, modelValue.priceMax || 5000]"
+      v-model="localSliderValue"
       :min="0"
       :max="5000"
       :lazy="true"
       :tooltips="false"
-      @change="
-        (val: number[]) => {
-          update('priceMin', val[0] ?? 0)
-          update('priceMax', val[1] ?? 0)
-        }
-      "
+      @change="onSliderChange"
     />
     <div class="filters__price-header">
       <div class="filters__price-left">
@@ -105,7 +123,6 @@
       <button class="filters__reset-price" @click="resetPrice">Reset price</button>
     </div>
   </div>
-
   <div class="filters__group">
     <label class="filters__toggle">
       <span class="filters__toggle-label">On sale</span>
