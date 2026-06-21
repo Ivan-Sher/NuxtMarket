@@ -18,15 +18,14 @@
     'update:modelValue': [filters: FiltersType]
   }>()
 
-  const localSliderValue = ref<[number, number]>([
-    props.modelValue.priceMin,
-    props.modelValue.priceMax ?? 5000,
-  ])
+  const PRICE_MAX = 5000
+
+  const localSliderValue = ref([props.modelValue.priceMin, props.modelValue.priceMax ?? PRICE_MAX])
 
   watch(
-    () => [props.modelValue.priceMin, props.modelValue.priceMax] as [number, number | undefined],
+    () => [props.modelValue.priceMin, props.modelValue.priceMax] as const,
     ([min, max]) => {
-      localSliderValue.value = [min, max ?? 5000]
+      localSliderValue.value = [min, max ?? PRICE_MAX]
     },
     { immediate: true },
   )
@@ -37,7 +36,7 @@
 
   function onSliderChange(val: number[]) {
     const min = val[0] ?? 0
-    const max = val[1] ?? 5000
+    const max = val[1] ?? PRICE_MAX
     localSliderValue.value = [min, max]
     emit('update:modelValue', {
       ...props.modelValue,
@@ -48,7 +47,7 @@
 
   function resetPrice() {
     const min = FILTERS_DEFAULTS.priceMin
-    const max = FILTERS_DEFAULTS.priceMax || 5000
+    const max = FILTERS_DEFAULTS.priceMax || PRICE_MAX
     localSliderValue.value = [min, max]
     emit('update:modelValue', {
       ...props.modelValue,
@@ -108,7 +107,7 @@
       :ref="sliderRef"
       v-model="localSliderValue"
       :min="0"
-      :max="5000"
+      :max="PRICE_MAX"
       :lazy="true"
       :tooltips="false"
       @change="onSliderChange"
@@ -117,7 +116,7 @@
       <div class="filters__price-left">
         <label class="filters__label">Price</label>
         <span class="filters__price-values">
-          ${{ modelValue.priceMin }} – ${{ modelValue.priceMax || '5000' }}
+          ${{ modelValue.priceMin }} – ${{ modelValue.priceMax || PRICE_MAX }}
         </span>
       </div>
       <button class="filters__reset-price" @click="resetPrice">Reset price</button>
@@ -149,7 +148,9 @@
     </label>
   </div>
 </template>
-
+<style lang="scss">
+  @import '@vueform/slider/themes/default.css';
+</style>
 <style scoped lang="scss">
   .filters__group {
     display: flex;

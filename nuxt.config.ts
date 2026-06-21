@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     },
   },
   modules: ['@pinia/nuxt', '@nuxt/image'],
-  css: ['~~/assets/styles/global.scss', '@vueform/slider/themes/default.css'],
+  css: ['~~/assets/styles/global.scss'],
 
   vite: {
     css: {
