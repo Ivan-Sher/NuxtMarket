@@ -2,25 +2,27 @@
   import { useEmailSubscription } from '~/composables/useEmailSubscription'
 
   import ArrowForm from './icons/ArrowForm.vue'
-  import BaseInput from './BaseInput.vue'
+  import BaseInput from './ui/BaseInput.vue'
 
   const { email, emailError, submitEmail } = useEmailSubscription()
 </script>
 <template>
-  <form class="footer-form" @submit.prevent="submitEmail">
-    <BaseInput
-      v-model="email"
-      :error="emailError"
-      placeholder="Give an email, get the newsletter."
-      type="text"
-      class="footer__input"
-    />
-    <button type="submit" class="footer-button"><ArrowForm /></button>
-  </form>
-  <label class="footer-form__checkbox-label">
-    <input type="checkbox" class="footer-form__checkbox" />
-    i agree to the website's terms and conditions
-  </label>
+  <div>
+    <form class="footer-form" @submit.prevent="submitEmail">
+      <BaseInput
+        v-model="email"
+        :error="emailError"
+        placeholder="Give an email, get the newsletter."
+        type="text"
+        class="footer__input"
+      />
+      <button type="submit" class="footer-button"><ArrowForm /></button>
+    </form>
+    <label class="footer-form__checkbox-label">
+      <input type="checkbox" class="footer-form__checkbox" />
+      i agree to the website's terms and conditions
+    </label>
+  </div>
 </template>
 <style scoped lang="scss">
   .footer-button {

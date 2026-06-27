@@ -29,7 +29,7 @@
     display: block;
     width: 100%;
     max-width: 670px;
-    margin: 90px 0 250px;
+    margin: 90px 0 0;
 
     @media (max-width: $bp-sm) {
       margin-top: 20px;

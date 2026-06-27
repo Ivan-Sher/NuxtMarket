@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  type ButtonVariant = 'primary' | 'secondary'
+  type ButtonVariant = 'primary' | 'secondary' | 'transparent'
   withDefaults(
     defineProps<{
       variant?: ButtonVariant
@@ -29,10 +29,11 @@
 
     &--primary {
       color: var(--white);
-      background: var(--black);
+      background: transparent;
+      border: 1px solid var(--white);
 
       &:hover {
-        background: var(--accent);
+        background: var(--black);
       }
 
       &:active {
@@ -41,13 +42,13 @@
     }
 
     &--secondary {
-      color: var(--white);
+      color: var(--black);
       background: transparent;
       border: 1px solid var(--white);
 
       &:hover {
         color: #000;
-        background: var(--white);
+        background: var(--secondary);
       }
 
       &:active {
@@ -55,6 +56,13 @@
         background: var(--accent);
         border-color: var(--accent);
       }
+    }
+
+    &--transparent {
+      padding: 0;
+      cursor: pointer;
+      background: transparent;
+      border: none;
     }
   }
 </style>

@@ -19,7 +19,7 @@ export const useEmailSubscription = () => {
     localStorage.setItem('subscribedEmail', email.value)
     email.value = ''
     emailError.value = ''
-    showToast('Почта успешно сохранена!')
+    showToast('Почта Сохранена', 'success')
   }
 
   return { email, emailError, validateEmail, submitEmail }

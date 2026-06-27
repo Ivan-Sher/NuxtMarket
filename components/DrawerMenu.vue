@@ -3,6 +3,7 @@
 
   const props = defineProps<{
     name: string
+    fullscreen?: boolean
   }>()
 
   const drawer = useDrawerStore()
@@ -11,7 +12,11 @@
 <template>
   <Teleport to="body">
     <Transition name="drawer">
-      <div v-if="drawer.isOpen(props.name)" class="drawer">
+      <div
+        v-if="drawer.isOpen(props.name)"
+        class="drawer"
+        :class="{ 'drawer--fullscreen': props.fullscreen }"
+      >
         <slot />
       </div>
     </Transition>
@@ -36,5 +41,9 @@
     @media (max-width: $bp-md) {
       display: block;
     }
+  }
+
+  .drawer--fullscreen {
+    top: 0;
   }
 </style>

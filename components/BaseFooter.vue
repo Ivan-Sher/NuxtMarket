@@ -40,7 +40,7 @@
       justify-content: space-between;
       width: 100%;
 
-      @media (max-width: $bp-sm) {
+      @media (max-width: $bp-512) {
         flex-flow: column-reverse wrap;
         align-items: start;
       }
