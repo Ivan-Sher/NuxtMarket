@@ -30,7 +30,7 @@ export const FILTERS_DEFAULTS: FiltersType = {
   category: '',
   sortBy: SortBy.Default,
   priceMin: 0,
-  priceMax: 0,
+  priceMax: 5000,
   onSale: false,
   inStock: false,
 }
