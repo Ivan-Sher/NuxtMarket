@@ -1,24 +1,14 @@
+// stores/cart.ts
 import { ref, computed } from 'vue'
 import { defineStore, skipHydrate } from 'pinia'
+import { useCartApi } from '~/composables/api/useCartApi'
+import { loadCartFromStorage, saveCartToStorage } from '~/utils/cartStorage'
+import type { CartItem } from '~/types/cart'
 
-const STORAGE_KEY = 'cart'
-const API_URL = 'https://shoppe-api-eleet.amvera.io/carts'
 const SYNC_DEBOUNCE_MS = 500
 
 export const useCartStore = defineStore('cart', () => {
   //State
-
-  interface CartItem {
-    id: string | number
-    quantity: number
-    price: number
-    name?: string
-    title?: string
-    image?: string
-    color?: string
-    size?: string
-  }
-
   const items = ref<CartItem[]>([])
   const isSyncing = ref(false)
   const lastSyncedAt = ref<number | null>(null)
@@ -34,22 +24,16 @@ export const useCartStore = defineStore('cart', () => {
 
   const isEmpty = computed(() => items.value.length === 0)
 
-  //Синхронизация и хранение
+  function formatPrice(price: number): string {
+    return `$ ${price.toFixed(2).replace('.', ',')}`
+  }
 
+  //Синхронизация и хранение
   let syncTimeout: ReturnType<typeof setTimeout> | null = null
   let needsSync = false
 
-  function loadFromLocalStorage() {
-    if (import.meta.server) return
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (!raw) return
-      const parsed = JSON.parse(raw)
-      if (Array.isArray(parsed)) {
-        items.value = parsed
-      }
-    } catch {}
-  }
+  // Загружаем корзину из localStorage при старте (клиент)
+  items.value = loadCartFromStorage()
 
   async function syncWithServer() {
     if (isSyncing.value) return
@@ -58,27 +42,8 @@ export const useCartStore = defineStore('cart', () => {
     error.value = null
 
     try {
-      const payload = {
-        items: items.value.map(({ id, quantity }) => ({ id, quantity })),
-      }
-
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 5000)
-
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-      })
-
-      clearTimeout(timeout)
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => null)
-        throw new Error(body?.error ?? `Sync failed: ${res.status}`)
-      }
-
+      const { syncCartToServer } = useCartApi()
+      await syncCartToServer(items.value.map(({ id, quantity }) => ({ id, quantity })))
       lastSyncedAt.value = Date.now()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to sync cart with server'
@@ -89,9 +54,8 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  function persistCart() {
-    if (import.meta.server) return
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items.value))
+  function persist() {
+    saveCartToStorage(items.value)
     needsSync = true
     if (syncTimeout) clearTimeout(syncTimeout)
     syncTimeout = setTimeout(() => syncWithServer(), SYNC_DEBOUNCE_MS)
@@ -109,14 +73,14 @@ export const useCartStore = defineStore('cart', () => {
     } else {
       items.value.push({ ...product, quantity: qty })
     }
-    persistCart()
+    persist()
   }
 
   function removeItem(id: string | number) {
     const idx = items.value.findIndex((i) => i.id === id)
     if (idx > -1) {
       items.value.splice(idx, 1)
-      persistCart()
+      persist()
     }
   }
 
@@ -128,27 +92,27 @@ export const useCartStore = defineStore('cart', () => {
     const item = items.value.find((i) => i.id === id)
     if (item) {
       item.quantity = qty
-      persistCart()
+      persist()
     }
   }
 
   function clearCart() {
     items.value = []
-    persistCart()
+    persist()
   }
 
-  loadFromLocalStorage()
-
+  /* ==============================
+           Публичное API
+  ============================== */
   return {
     items: skipHydrate(items),
     isSyncing,
     lastSyncedAt,
     error,
-    // getters
     totalItems,
     totalPrice,
     isEmpty,
-    // actions
+    formatPrice,
     addItem,
     removeItem,
     updateQuantity,

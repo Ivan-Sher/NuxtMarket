@@ -1,19 +1,12 @@
 <!-- components/CartSidebar.vue -->
 <script setup lang="ts">
-  import { onMounted, onUnmounted, computed } from 'vue'
+  import { onMounted, onUnmounted } from 'vue'
   import { useCartStore } from '~/stores/cart'
   import { useDrawerStore } from '~/stores/drawer'
 
   const cart = useCartStore()
   const drawer = useDrawerStore()
   const DRAWER_NAME = 'cart'
-
-  function formatPrice(price: number): string {
-    return `$ ${price.toFixed(2).replace('.', ',')}`
-  }
-
-  const totalItems = computed(() => cart.totalItems)
-  const subtotal = computed(() => cart.totalPrice)
 
   function onKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape' && drawer.isOpen(DRAWER_NAME)) {
@@ -36,7 +29,7 @@
         <header class="sidebar__header">
           <div class="header__info">
             <h2>Shopping bag</h2>
-            <p>{{ totalItems }} items</p>
+            <p>{{ cart.totalItems }} items</p>
           </div>
           <button class="sidebar__close" @click="drawer.close()">✕</button>
         </header>
@@ -52,7 +45,7 @@
                 <button class="cart-item__remove" @click="cart.removeItem(item.id)">✕</button>
               </div>
 
-              <span class="cart-item__price">{{ formatPrice(item.price) }}</span>
+              <span class="cart-item__price">{{ cart.formatPrice(item.price) }}</span>
 
               <div class="cart-item__quantity">
                 <button class="qty-btn" @click="cart.updateQuantity(item.id, item.quantity - 1)">
@@ -69,8 +62,8 @@
 
         <footer v-if="!cart.isEmpty" class="sidebar__footer">
           <div class="sidebar__subtotal">
-            <span>Subtotal ({{ totalItems }} items)</span>
-            <strong>{{ formatPrice(subtotal) }}</strong>
+            <span>Subtotal ({{ cart.totalItems }} items)</span>
+            <strong>{{ cart.formatPrice(cart.totalPrice) }}</strong>
           </div>
           <button class="sidebar__checkout">CHECKOUT</button>
         </footer>
