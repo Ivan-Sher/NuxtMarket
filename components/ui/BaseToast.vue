@@ -1,8 +1,16 @@
 <script setup lang="ts">
   import { useToast } from '~/composables/useToast'
+  import { useDrawerStore } from '~/stores/drawer'
   import ArrowToast from '@/components/icons/ArrowToast.vue'
 
   const { isVisible, message, type } = useToast()
+  const toast = useToast()
+  const drawer = useDrawerStore()
+
+  function handleViewCart() {
+    toast.hideToast()
+    drawer.open('cart')
+  }
 </script>
 
 <template>
@@ -12,7 +20,9 @@
         <span class="toast__icon"><ArrowToast /> </span>
         <span class="toast__message">{{ message }}</span>
       </div>
-      <div class="toast__block-second"><button class="toast__action">View Cart</button></div>
+      <div class="toast__block-second">
+        <button class="toast__action" @click="handleViewCart">View Cart</button>
+      </div>
     </div>
   </Transition>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import type { Product } from '~/types/api'
   import { ref } from 'vue'
+  import { useCartStore } from '~/stores/cart'
 
   const props = defineProps<{
     product: Product
@@ -11,6 +12,7 @@
     'click-card': [product: Product]
   }>()
 
+  const cart = useCartStore()
   const isTapped = ref(false)
 
   function handleCardClick() {
@@ -22,7 +24,15 @@
   }
 
   function handleAddToCart() {
+    cart.addItem({
+      id: props.product.id,
+      name: props.product.title,
+      price: props.product.price,
+      image: props.product.image,
+    })
+
     emit('add-to-cart', props.product)
+
     isTapped.value = false
   }
 </script>
@@ -67,8 +77,9 @@
     width: 100%;
     height: 64px;
     padding: 10px 24px;
-    font-size: 16px;
-    font-weight: 700;
+
+    @include text(body-lg);
+
     text-transform: uppercase;
     white-space: nowrap;
     cursor: pointer;
@@ -83,7 +94,10 @@
     }
 
     @media (max-width: $bp-sm) {
-      font-size: 14px;
+      @include text(body-md);
+
+      height: 50px;
+      padding: 8px 16px;
     }
   }
 
@@ -116,8 +130,9 @@
     @include text(h3);
 
     font-weight: 500;
-    color: #a18a68;
+    color: var(--accent);
 
+    // Мобильная адаптация
     @media (max-width: $bp-md) {
       font-size: 14px;
     }

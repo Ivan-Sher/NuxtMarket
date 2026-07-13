@@ -10,6 +10,7 @@
   <div>
     <BaseHeader :class="{ 'header--with-margin': !isHome }" />
     <slot />
+    <CartSidebar />
     <BaseFooter />
   </div>
 </template>
