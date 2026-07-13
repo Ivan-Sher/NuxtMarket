@@ -1,5 +1,5 @@
 import { useRuntimeConfig, useCookie, useNuxtApp } from '#app'
-import type { $Fetch } from 'ofetch'
+import type { $Fetch, FetchOptions } from 'ofetch'
 
 export const useCartApi = () => {
   const nuxtApp = useNuxtApp()
@@ -7,16 +7,17 @@ export const useCartApi = () => {
   const config = useRuntimeConfig()
   const authToken = useCookie<string | null>('authToken')
 
-  const syncCartToServer = (items: { id: string | number; quantity: number }[]) => {
-    return $fetch(`${config.public.apiBaseUrl}/carts`, {
-      method: 'POST',
+  const cartFetch = (url: string, options?: FetchOptions) => {
+    return $fetch(url, {
+      baseURL: config.public.apiBaseUrl,
       headers: {
         'Content-Type': 'application/json',
         Authorization: authToken.value ? `Bearer ${authToken.value}` : config.public.apiToken,
+        ...options?.headers,
       },
-      body: { items },
+      ...options,
     })
   }
 
-  return { syncCartToServer }
+  return { cartFetch }
 }

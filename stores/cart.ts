@@ -42,8 +42,11 @@ export const useCartStore = defineStore('cart', () => {
     error.value = null
 
     try {
-      const { syncCartToServer } = useCartApi()
-      await syncCartToServer(items.value.map(({ id, quantity }) => ({ id, quantity })))
+      const { cartFetch } = useCartApi()
+      await cartFetch(`/carts`, {
+        method: 'POST',
+        body: { items: items.value.map(({ id, quantity }) => ({ id, quantity })) },
+      })
       lastSyncedAt.value = Date.now()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to sync cart with server'
