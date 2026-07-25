@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import Logo from './icons/Logo.vue'
+  import Logo from '~/components/icons/Logo.vue'
 </script>
 <template>
   <NuxtLink to="/" class="header-inner-logo"><Logo /></NuxtLink>

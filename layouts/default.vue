@@ -4,11 +4,12 @@
 
   const route = useRoute()
   const isHome = computed(() => route.path === '/')
+  const isProduct = computed(() => route.path.startsWith('/product'))
 </script>
 
 <template>
   <div>
-    <BaseHeader :class="{ 'header--with-margin': !isHome }" />
+    <BaseHeader :class="{ 'header--with-margin': !isHome && !isProduct }" />
     <slot />
     <CartSidebar />
     <BaseFooter />

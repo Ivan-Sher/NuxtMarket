@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import TwitterIcon from './icons/TwitterIcon.vue'
-  import FacebookIcon from './icons/FacebookIcon.vue'
-  import InstagramIcon from './icons/InstagramIcon.vue'
+  import TwitterIcon from '~/components/icons/TwitterIcon.vue'
+  import FacebookIcon from '~/components/icons/FacebookIcon.vue'
+  import InstagramIcon from '~/components/icons/InstagramIcon.vue'
 
   const footerIcons = [
     { id: 'instagram', icon: InstagramIcon, to: '/instagram' },

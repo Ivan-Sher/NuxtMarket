@@ -42,9 +42,9 @@
     }
 
     &--secondary {
-      color: var(--black);
+      color: var(--white);
       background: transparent;
-      border: 1px solid var(--white);
+      border: 1px solid var(--black);
 
       &:hover {
         color: #000;
@@ -52,9 +52,9 @@
       }
 
       &:active {
-        color: var(--black);
-        background: var(--accent);
-        border-color: var(--accent);
+        color: var(--white);
+        background: transparent;
+        border-color: var(--black);
       }
     }
 

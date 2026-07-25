@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import SearchIcon from '@/components/icons/SearchIcon.vue'
-  import ChevronDownIcon from '@/components/icons/ChevronDownIcon.vue'
+  import SearchIcon from '~/components/icons/SearchIcon.vue'
+  import ChevronDownIcon from '~/components/icons/ChevronDownIcon.vue'
   import { FILTERS_DEFAULTS } from '~/types/filters'
   import type { FiltersType } from '~/types/filters'
   import { SortBy } from '~/types/filters'

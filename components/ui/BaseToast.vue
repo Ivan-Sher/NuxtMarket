@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useToast } from '~/composables/useToast'
   import { useDrawerStore } from '~/stores/drawer'
-  import ArrowToast from '@/components/icons/ArrowToast.vue'
+  import ArrowToast from '~/components/icons/ArrowToast.vue'
 
   const { isVisible, message, type } = useToast()
   const toast = useToast()

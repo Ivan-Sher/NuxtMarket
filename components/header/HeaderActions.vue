@@ -1,13 +1,19 @@
 <script setup lang="ts">
-  import ProfileIcon from './icons/ProfileIcon.vue'
-  import SearchIcon from './icons/SearchIcon.vue'
-  import CartIcon from './icons/CartIcon.vue'
+  import { ref, onMounted } from 'vue'
+  import ProfileIcon from '~/components/icons/ProfileIcon.vue'
+  import SearchIcon from '~/components/icons/SearchIcon.vue'
+  import CartIcon from '~/components/icons/CartIcon.vue'
   import { useCartStore } from '~/stores/cart'
   import { useDrawerStore } from '~/stores/drawer'
 
   const cart = useCartStore()
   const drawer = useDrawerStore()
 
+  const isMounted = ref(false)
+
+  onMounted(() => {
+    isMounted.value = true
+  })
   const iconLinks = [
     { name: 'search', label: 'поиск', icon: SearchIcon },
     { name: 'cart', label: 'корзина', icon: CartIcon },
@@ -35,8 +41,7 @@
       @click="handleIconClick(icon.name)"
     >
       <component :is="icon.icon" />
-      <!-- Счётчик товаров -->
-      <span v-if="icon.name === 'cart' && cart.totalItems > 0" class="cart-badge">
+      <span v-if="icon.name === 'cart' && isMounted && cart.totalItems > 0" class="cart-badge">
         {{ cart.totalItems }}
       </span>
     </button>
