@@ -1,26 +1,16 @@
 <script setup lang="ts">
   import { computed } from 'vue'
-  import type { Product } from '~/types/api'
   import BaseButton from '~/components/ui/BaseButton.vue'
   import ProductIcons from './ProductIcons.vue'
   import ArrowRight from '~/components/icons/ArrowRight.vue'
   import Share from '~/components/icons/Share.vue'
+  import type { ProductInfoProps } from '~/types/productInfo'
 
-  const props = withDefaults(
-    defineProps<{
-      product: Product
-      rating?: number
-      reviewCount?: number
-      isMobile?: boolean
-      showFullDescription?: boolean
-      quantity?: number
-    }>(),
-    {
-      isMobile: false,
-      showFullDescription: false,
-      quantity: 1,
-    },
-  )
+  const props = withDefaults(defineProps<ProductInfoProps>(), {
+    isMobile: false,
+    showFullDescription: false,
+    quantity: 1,
+  })
 
   const emit = defineEmits<{
     'add-to-cart': [quantity: number]

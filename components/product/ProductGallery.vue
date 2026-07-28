@@ -1,19 +1,17 @@
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue'
   import { Swiper, SwiperSlide } from 'swiper/vue'
+  import type { Swiper as SwiperClass } from 'swiper/types'
   import 'swiper/css'
   import 'swiper/css/pagination'
 
-  defineProps({
-    images: {
-      type: Array,
-      required: true,
-    },
-  })
+  defineProps<{
+    images: string[]
+  }>()
 
   const activeIndex = ref(0)
 
-  const onSlideChange = (swiper) => {
+  const onSlideChange = (swiper: SwiperClass) => {
     activeIndex.value = swiper.activeIndex
   }
 </script>
@@ -107,9 +105,7 @@
       height: 100%;
       border-radius: 8px;
     }
-  }
 
-  @media (max-width: $bp-sm) {
     .gallery-desktop {
       display: none;
     }

@@ -1,33 +1,24 @@
 <script setup lang="ts">
-  import type { Review } from '~/composables/useProductReviews'
+  import { reactive } from 'vue'
   import BaseButton from '~/components/ui/BaseButton.vue'
+  import type { ProductReviewsProps } from '~/types/productReviews'
 
-  withDefaults(
-    defineProps<{
-      reviews: Review[]
-      formName: string
-      formEmail: string
-      formRating: number
-      formText: string
-      errors: Record<string, string>
-      successMessage: string
-    }>(),
-    {
-      formName: '',
-      formEmail: '',
-      formRating: 0,
-      formText: '',
-      successMessage: '',
-    },
-  )
+  defineProps<ProductReviewsProps>()
 
-  defineEmits<{
-    'update:formName': [value: string]
-    'update:formEmail': [value: string]
-    'update:formRating': [value: number]
-    'update:formText': [value: string]
-    submit: []
+  const emit = defineEmits<{
+    submit: [{ name: string; email: string; rating: number; text: string }]
   }>()
+
+  const form = reactive({
+    name: '',
+    email: '',
+    rating: 0,
+    text: '',
+  })
+
+  function handleSubmit() {
+    emit('submit', { ...form })
+  }
 </script>
 <template>
   <div class="product-reviews">
@@ -52,35 +43,17 @@
     <div class="product-reviews__right">
       <h4>Add a Review</h4>
       <p class="desc">Your email address will not be published. Required fields are marked *</p>
-      <form class="review-form" @submit.prevent="$emit('submit')">
+      <form class="review-form" @submit.prevent="handleSubmit">
         <div class="form-group">
-          <textarea
-            :value="formText"
-            required
-            rows="4"
-            placeholder="Your Review*"
-            @input="$emit('update:formText', ($event.target as HTMLTextAreaElement).value)"
-          ></textarea>
+          <textarea v-model="form.text" required rows="4" placeholder="Your Review*"></textarea>
           <span v-if="errors.text" class="error">{{ errors.text }}</span>
         </div>
         <div class="form-group">
-          <input
-            :value="formName"
-            type="text"
-            required
-            placeholder="Enter your name*"
-            @input="$emit('update:formName', ($event.target as HTMLInputElement).value)"
-          />
+          <input v-model="form.name" type="text" required placeholder="Enter your name*" />
           <span v-if="errors.name" class="error">{{ errors.name }}</span>
         </div>
         <div class="form-group">
-          <input
-            :value="formEmail"
-            type="email"
-            required
-            placeholder="Enter your Email*"
-            @input="$emit('update:formEmail', ($event.target as HTMLInputElement).value)"
-          />
+          <input v-model="form.email" type="email" required placeholder="Enter your Email*" />
           <span v-if="errors.email" class="error">{{ errors.email }}</span>
         </div>
         <div class="form-group">
@@ -96,8 +69,8 @@
               v-for="i in 5"
               :key="i"
               class="star"
-              :class="{ filled: i <= formRating }"
-              @click="$emit('update:formRating', i)"
+              :class="{ filled: i <= form.rating }"
+              @click="form.rating = i"
               >★</span
             >
           </div>
@@ -117,7 +90,7 @@
     max-width: 1248px;
     margin: 10px 0;
 
-    @media (max-width: $bp-sm) {
+    @media (max-width: $bp-md) {
       flex-direction: column;
     }
   }

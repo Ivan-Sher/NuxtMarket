@@ -26,7 +26,7 @@
   const cart = useCartStore()
   const { showToast } = useToast()
 
-  const { reviews, form, errors, successMessage, reviewCount, averageRating, submitReview } =
+  const { reviews, errors, successMessage, reviewCount, averageRating, submitReview } =
     useProductReviews(productId)
 
   const { similarItems, similarStatus } = useSimilarProducts(product)
@@ -123,17 +123,9 @@
           <template #tab-2>
             <ProductReviews
               :reviews="reviews"
-              :form-name="form.name"
-              :form-email="form.email"
-              :form-rating="form.rating"
-              :form-text="form.text"
               :errors="errors"
               :success-message="successMessage"
-              @update:form-name="form.name = $event"
-              @update:form-email="form.email = $event"
-              @update:form-rating="form.rating = $event"
-              @update:form-text="form.text = $event"
-              @submit="submitReview()"
+              @submit="submitReview"
             />
           </template>
         </BaseTabs>
