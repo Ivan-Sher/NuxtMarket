@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import SearchMobileIcon from './icons/SearchMobileIcon.vue'
+  import SearchMobileIcon from '~/components/icons/SearchMobileIcon.vue'
 </script>
 <template>
   <div class="search">

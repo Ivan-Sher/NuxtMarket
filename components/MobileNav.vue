@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import ProfileIcon from './icons/ProfileIcon.vue'
-  import LogoutIcon from './icons/LogoutIcon.vue'
+  import ProfileIcon from '~/components/icons/ProfileIcon.vue'
+  import LogoutIcon from '~/components/icons/LogoutIcon.vue'
 
   const navLinksMobile = [
     { label: 'Shop', to: '/shop' },

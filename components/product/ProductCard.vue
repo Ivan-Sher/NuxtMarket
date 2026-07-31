@@ -2,6 +2,7 @@
   import type { Product } from '~/types/api'
   import { ref } from 'vue'
   import { useCartStore } from '~/stores/cart'
+  import { useBreakpoint } from '~/composables/useBreakpoint'
 
   const props = defineProps<{
     product: Product
@@ -14,8 +15,13 @@
 
   const cart = useCartStore()
   const isTapped = ref(false)
+  const { isDesktop } = useBreakpoint()
 
   function handleCardClick() {
+    if (isDesktop.value) {
+      emit('click-card', props.product)
+      return
+    }
     if (!isTapped.value) {
       isTapped.value = true
     } else {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { useDrawerStore } from '~/stores/drawer'
 
-  import BurgerIcon from './icons/BurgerIcon.vue'
-  import BurgerCloseIcon from './icons/BurgerCloseIcon.vue'
+  import BurgerIcon from '~/components/icons/BurgerIcon.vue'
+  import BurgerCloseIcon from '~/components/icons/BurgerCloseIcon.vue'
 
   const drawer = useDrawerStore()
 </script>

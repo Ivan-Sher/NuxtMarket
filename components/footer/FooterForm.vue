@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { useEmailSubscription } from '~/composables/useEmailSubscription'
 
-  import ArrowForm from './icons/ArrowForm.vue'
-  import BaseInput from './ui/BaseInput.vue'
+  import ArrowForm from '~/components/icons/ArrowForm.vue'
+  import BaseInput from '~/components/ui/BaseInput.vue'
 
   const { email, emailError, submitEmail } = useEmailSubscription()
 </script>

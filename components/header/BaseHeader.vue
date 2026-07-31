@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import HeaderLine from './icons/HeaderLine.vue'
+  import HeaderLine from '~/components/icons/HeaderLine.vue'
   import HeaderLogo from './HeaderLogo.vue'
 </script>
 <template>

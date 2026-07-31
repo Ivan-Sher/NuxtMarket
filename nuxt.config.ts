@@ -35,4 +35,17 @@ export default defineNuxtConfig({
       ],
     },
   },
+  components: {
+    dirs: [
+      '~/components',
+      {
+        path: '~/components/header',
+        pathPrefix: false,
+      },
+      {
+        path: '~/components/footer',
+        pathPrefix: false,
+      },
+    ],
+  },
 })

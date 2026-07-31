@@ -1,11 +1,11 @@
 <script setup lang="ts">
   import { useDrawerStore } from '~/stores/drawer'
-  import FiltersIcon from '@/components/icons/FiltersIcon.vue'
-  import BurgerCloseIcon from '@/components/icons/BurgerCloseIcon.vue'
+  import FiltersIcon from '~/components/icons/FiltersIcon.vue'
+  import BurgerCloseIcon from '~/components/icons/BurgerCloseIcon.vue'
   import { ref } from 'vue'
   import type { FiltersType } from '~/types/filters'
   import { SortBy } from '~/types/filters'
-  import FiltersForm from '@/components/FiltersForm.vue'
+  import FiltersForm from '~/components/FiltersForm.vue'
 
   const props = defineProps<{
     modelValue: FiltersType
