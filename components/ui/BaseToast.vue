@@ -55,7 +55,7 @@
   }
 
   .toast--error {
-    background: #fdf0f0;
+    background: #ff9696;
     border-bottom-color: #e0c0c0;
   }
 

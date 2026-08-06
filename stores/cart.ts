@@ -1,4 +1,3 @@
-// stores/cart.ts
 import { ref, computed } from 'vue'
 import { defineStore, skipHydrate } from 'pinia'
 import { useCartApi } from '~/composables/api/useCartApi'
