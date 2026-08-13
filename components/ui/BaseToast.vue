@@ -2,6 +2,7 @@
   import { useToast } from '~/composables/useToast'
   import { useDrawerStore } from '~/stores/drawer'
   import ArrowToast from '~/components/icons/ArrowToast.vue'
+  import CrossToast from '~/components/icons/CrossToast.vue'
 
   const { isVisible, message, type } = useToast()
   const toast = useToast()
@@ -17,7 +18,10 @@
   <Transition name="toast">
     <div v-if="isVisible" class="toast" :class="`toast--${type}`">
       <div class="toast__block-first">
-        <span class="toast__icon"><ArrowToast /> </span>
+        <span class="toast__icon">
+          <ArrowToast v-if="type === 'success'" />
+          <CrossToast v-else />
+        </span>
         <span class="toast__message">{{ message }}</span>
       </div>
       <div class="toast__block-second">
@@ -55,7 +59,7 @@
   }
 
   .toast--error {
-    background: #ff9696;
+    background: #efefef;
     border-bottom-color: #e0c0c0;
   }
 
