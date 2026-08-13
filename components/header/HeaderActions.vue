@@ -1,30 +1,54 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref, watch, onMounted } from 'vue'
   import ProfileIcon from '~/components/icons/ProfileIcon.vue'
   import SearchIcon from '~/components/icons/SearchIcon.vue'
   import CartIcon from '~/components/icons/CartIcon.vue'
   import { useCartStore } from '~/stores/cart'
   import { useDrawerStore } from '~/stores/drawer'
+  import { useAuthStore } from '~/stores/auth'
+  import { navigateTo } from '#app'
+  import { useToast } from '~/composables/useToast'
 
   const cart = useCartStore()
   const drawer = useDrawerStore()
+  const auth = useAuthStore()
 
   const isMounted = ref(false)
+  const profileClickedAfterAuth = ref(false)
 
-  onMounted(() => {
-    isMounted.value = true
-  })
   const iconLinks = [
     { name: 'search', label: 'поиск', icon: SearchIcon },
     { name: 'cart', label: 'корзина', icon: CartIcon },
     { name: 'profile', label: 'профиль', icon: ProfileIcon },
   ]
 
+  onMounted(() => {
+    isMounted.value = true
+  })
+
   function handleIconClick(name: string) {
     if (name === 'cart') {
       drawer.toggle('cart')
+    } else if (name === 'profile') {
+      if (auth.isAuthenticated) {
+        auth.logout()
+        const { showToast } = useToast()
+        showToast('You have been logged out', 'success')
+        profileClickedAfterAuth.value = true
+      } else {
+        navigateTo('/account')
+      }
     }
   }
+
+  watch(
+    () => auth.isAuthenticated,
+    (value) => {
+      if (value) {
+        profileClickedAfterAuth.value = false
+      }
+    },
+  )
 </script>
 
 <template>
@@ -35,7 +59,11 @@
       :class="[
         'header__icon-btn',
         `header__icon-${icon.name}`,
-        { 'has-badge': icon.name === 'cart' && cart.totalItems > 0 },
+        {
+          'has-badge':
+            (icon.name === 'cart' && cart.totalItems > 0) ||
+            (icon.name === 'profile' && auth.isAuthenticated),
+        },
       ]"
       :aria-label="icon.label"
       @click="handleIconClick(icon.name)"
@@ -44,9 +72,11 @@
       <span v-if="icon.name === 'cart' && isMounted && cart.totalItems > 0" class="cart-badge">
         {{ cart.totalItems }}
       </span>
+      <span v-if="icon.name === 'profile' && auth.isAuthenticated" class="auth-indicator"></span>
     </button>
   </div>
 </template>
+
 <style scoped lang="scss">
   .header-inner-content-icons {
     display: flex;
@@ -87,6 +117,16 @@
     color: rgb(0 0 0);
     background: white;
     border: 1px solid rgb(0 0 0);
+    border-radius: 50%;
+  }
+
+  .auth-indicator {
+    position: absolute;
+    top: 5px;
+    right: 3px;
+    width: 6px;
+    height: 6px;
+    background: #4caf50;
     border-radius: 50%;
   }
 

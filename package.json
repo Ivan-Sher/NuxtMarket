@@ -47,7 +47,9 @@
     "stylelint-config-recess-order": "^7.1.0",
     "stylelint-config-standard-scss": "^15.0.1",
     "stylelint-config-standard-vue": "^1.0.0",
-    "vite-tsconfig-paths": "^6.1.1"
+    "typescript": "~5.8.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vue-tsc": "^3.3.9"
   },
   "lint-staged": {
     "*.{js,ts,vue}": "eslint --fix",

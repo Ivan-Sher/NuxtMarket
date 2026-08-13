@@ -16,6 +16,9 @@ export default defineNuxtConfig({
   css: ['~~/assets/styles/global.scss'],
 
   vite: {
+    optimizeDeps: {
+      include: ['@vue/devtools-core', '@vue/devtools-kit', 'swiper/vue', 'swiper/modules'],
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -44,6 +47,10 @@ export default defineNuxtConfig({
       },
       {
         path: '~/components/footer',
+        pathPrefix: false,
+      },
+      {
+        path: '~/components/ui',
         pathPrefix: false,
       },
     ],

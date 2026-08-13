@@ -28,6 +28,7 @@ export default [
         ...globals.browser,
         ...globals.node,
         defineNuxtConfig: 'readonly',
+        definePageMeta: 'readonly',
       },
     },
 
