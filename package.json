@@ -17,7 +17,7 @@
     "lint:fix": "npm run format && npm run lint:styles -- --fix && npm run lint -- --fix",
     "prepare": "husky",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run --pool=threads"
   },
   "dependencies": {
     "@nuxt/image": "^2.0.0",

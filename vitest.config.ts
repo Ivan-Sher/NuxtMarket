@@ -4,5 +4,6 @@ export default defineVitestConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    pool: 'threads',
   },
 })
