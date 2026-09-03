@@ -1,7 +1,14 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, vi, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import ProductList from '~/components/product/ProductList.vue'
+import ProductCard from '~/components/product/ProductCard.vue'
+
+vi.mock('~/stores/cart', () => ({
+  useCartStore: vi.fn(() => ({
+    addItem: vi.fn(),
+  })),
+}))
 
 const testProducts = [
   {
@@ -37,12 +44,16 @@ const testProducts = [
 ]
 
 function mountProductList() {
-  setActivePinia(createPinia())
+  const pinia = createPinia()
+  setActivePinia(pinia)
 
   return mount(ProductList, {
     props: { products: testProducts },
     global: {
-      plugins: [createPinia()],
+      plugins: [pinia],
+      components: {
+        ProductCard,
+      },
     },
   })
 }
@@ -75,7 +86,7 @@ describe('ProductList — похожие товары', () => {
 
   it('отображает изображение каждого товара', () => {
     const wrapper = mountProductList()
-    const images = wrapper.findAll('.product-card img')
+    const images = wrapper.findAll('img')
 
     expect(images[0]!.attributes('src')).toBe('/images/coat.jpg')
     expect(images[1]!.attributes('src')).toBe('/images/scarf.jpg')
