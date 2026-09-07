@@ -29,11 +29,17 @@ export default defineNuxtConfig({
   },
 
   app: {
+    baseURL: process.env.NUXT_APP_BASE_URL || '/',
     head: {
       link: [
         {
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap',
+        },
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: `${process.env.NUXT_APP_BASE_URL || '/'}favicon.ico`,
         },
       ],
     },
