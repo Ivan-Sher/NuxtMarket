@@ -41,9 +41,26 @@ jobs:
             cp .output/public/200.html .output/public/index.html
             echo "Created index.html from 200.html fallback"
           fi
-      - name: Copy _headers for GitHub Pages
-        run: cp public/_headers .output/public/_headers
-        
+
+      - name: Generate _headers with correct baseURL
+        run: |
+          cat > .output/public/_headers << EOF
+          /${{ github.event.repository.name }}/_nuxt/*
+            Cache-Control: public, max-age=31536000, immutable
+          /${{ github.event.repository.name }}/*.jpg
+            Cache-Control: public, max-age=31536000, immutable
+          /${{ github.event.repository.name }}/*.webp
+            Cache-Control: public, max-age=31536000, immutable
+          /${{ github.event.repository.name }}/*.png
+            Cache-Control: public, max-age=31536000, immutable
+          /${{ github.event.repository.name }}/*.ico
+            Cache-Control: public, max-age=31536000, immutable
+          /${{ github.event.repository.name }}/*.html
+            Cache-Control: public, max-age=0, must-revalidate
+          /${{ github.event.repository.name }}/
+            Cache-Control: public, max-age=0, must-revalidate
+          EOF
+
       - name: Create .nojekyll file
         run: touch .output/public/.nojekyll
 
