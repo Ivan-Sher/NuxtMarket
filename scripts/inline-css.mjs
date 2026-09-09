@@ -24,7 +24,14 @@ let html = readFileSync(htmlPath, 'utf-8')
 const cssLinks = [...html.matchAll(/<link[^>]*href="([^"]+\.css)"[^>]*>/g)]
 
 for (const [fullTag, href] of cssLinks) {
-  const cssPath = resolve(publicDir, href.replace(/^\//, ''))
+  const cleanHref = href.replace(/^\/[^/]+\//, '')
+  const cssPath = resolve(publicDir, cleanHref)
+
+  if (!existsSync(cssPath)) {
+    console.log(`⚠️ CSS not found: ${cssPath}. Skipping.`)
+    continue
+  }
+
   const css = readFileSync(cssPath, 'utf-8')
   html = html.replace(fullTag, `<style>${css}</style>`)
 }
