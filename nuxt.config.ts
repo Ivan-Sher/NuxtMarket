@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     },
   },
   modules: ['@pinia/nuxt', '@nuxt/image'],
-  css: ['~~/assets/styles/global.scss'],
+  css: ['@fontsource-variable/dm-sans/wght.css', '~~/assets/styles/global.scss'],
 
   vite: {
     optimizeDeps: {
@@ -32,10 +32,6 @@ export default defineNuxtConfig({
     baseURL: process.env.NUXT_APP_BASE_URL || '/',
     head: {
       link: [
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap',
-        },
         {
           rel: 'icon',
           type: 'image/x-icon',

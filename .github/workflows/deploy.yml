@@ -35,6 +35,15 @@ jobs:
         env:
           NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
 
+      - name: Ensure index.html exists (fallback for prerender 500)
+        run: |
+          if [ ! -f .output/public/index.html ]; then
+            cp .output/public/200.html .output/public/index.html
+            echo "Created index.html from 200.html fallback"
+          fi
+      - name: Copy _headers for GitHub Pages
+        run: cp public/_headers .output/public/_headers
+        
       - name: Create .nojekyll file
         run: touch .output/public/.nojekyll
 
