@@ -22,8 +22,16 @@
       :slides-per-view="1"
       :space-between="50"
     >
-      <SwiperSlide v-for="photo in photos" :key="photo.id">
-        <img :src="photo.url" :alt="`Slide ${photo.id}`" />
+      <SwiperSlide v-for="(photo, index) in photos" :key="photo.id">
+        <img
+          :src="photo.url"
+          :alt="`Slide ${photo.id}`"
+          :loading="index === 0 ? 'eager' : 'lazy'"
+          :fetchpriority="index === 0 ? 'high' : 'auto'"
+          width="1248"
+          height="646"
+          decoding="async"
+        />
         <SlideOverlay />
       </SwiperSlide>
     </Swiper>
@@ -37,11 +45,13 @@
     width: 100%;
     max-width: 1248px;
     height: 646px;
+    aspect-ratio: 1248 / 646;
     overflow: hidden;
     border-radius: 16px;
 
     @media (max-width: $bp-sm) {
-      height: 354px;
+      height: auto;
+      aspect-ratio: 1248 / 354;
     }
   }
 
@@ -54,7 +64,6 @@
   }
 
   :deep(.swiper-slide img) {
-    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
