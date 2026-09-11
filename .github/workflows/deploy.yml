@@ -34,6 +34,8 @@ jobs:
         run: npm run generate
         env:
           NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
 
       - name: Ensure index.html exists (fallback for prerender 500)
         run: |
