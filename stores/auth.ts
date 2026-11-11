@@ -1,62 +1,67 @@
-import { ref, computed } from 'vue'
-import { defineStore, skipHydrate } from 'pinia'
-import { useToast } from '~/composables/useToast'
-import { useAuthApi } from '~/composables/api/useAuthApi'
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import { $fetch } from 'ofetch'
 
 export const useAuthStore = defineStore('auth', () => {
-  // State
-  const token = ref<string | null>(null)
-
-  if (import.meta.client) {
-    const savedToken = localStorage.getItem('auth_token')
-    if (savedToken) {
-      token.value = savedToken
-    }
-  }
-
+  const isAuthenticated = ref(false)
+  const username = ref<string | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  // Getters
-  const user = computed(() => ({ token: token.value }))
-  const isAuthenticated = computed(() => !!token.value)
+  // Проверка сессии при загрузке страницы (через куку)
+  async function checkAuth() {
+    try {
+      const data = await $fetch<{ username: string }>('/api/auth/me')
+      isAuthenticated.value = true
+      username.value = data.username
+    } catch {
+      isAuthenticated.value = false
+      username.value = null
+    }
+  }
 
-  // Actions
-  async function login(username: string, password: string) {
+  // Вход / Авто-регистрация
+  async function login(user: string, pass: string) {
     isLoading.value = true
     error.value = null
-
     try {
-      const { login: apiLogin } = useAuthApi()
-      const data = await apiLogin({ username, password })
-      token.value = data.token
-      if (import.meta.client) {
-        localStorage.setItem('auth_token', data.token)
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Login failed'
-      error.value = message
+      const data = await $fetch<{ success: boolean; username: string }>('/api/auth/login', {
+        method: 'POST',
+        body: { username: user, password: pass },
+      })
+      isAuthenticated.value = true
+      username.value = data.username
+      return true
+    } catch (err: unknown) {
+      error.value = (err as { data?: { message?: string } })?.data?.message || 'Ошибка входа'
+      return false
     } finally {
       isLoading.value = false
     }
   }
 
-  function logout() {
-    token.value = null
-    if (import.meta.client) {
-      localStorage.removeItem('auth_token')
+  // Выход
+  async function logout() {
+    try {
+      await $fetch('/api/auth/logout', { method: 'POST' })
+    } finally {
+      isAuthenticated.value = false
+      username.value = null
     }
-    const { showToast } = useToast()
-    showToast('Logged out', 'success')
+  }
+
+  // Запуск проверки только на клиенте
+  if (import.meta.client) {
+    checkAuth()
   }
 
   return {
-    user,
-    token: skipHydrate(token),
+    isAuthenticated,
+    username,
     isLoading,
     error,
-    isAuthenticated,
     login,
     logout,
+    checkAuth,
   }
 })
